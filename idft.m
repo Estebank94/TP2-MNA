@@ -1,4 +1,4 @@
-function y = dft(x,N)
+function y = idft(x,N)
   L=length(x);
   y=[ ]; % matriz vacia
   k=0:L -1;
