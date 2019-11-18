@@ -13,7 +13,7 @@ while q <= 0 || mod(q,2) > 0
 end
 s = q/2;
 
-integrators = {@phi_LieTrotter}; %TODO add strang
+integrators = {@phi_lie_trotter, @phi_strang};
 integrator_method = 0;
 while integrator_method <= 0 || integrator_method > 2
     prompt = 'Seleccionar un método (1: Lie-Trotter, 2: Strang): ';
