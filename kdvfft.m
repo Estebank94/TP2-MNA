@@ -56,7 +56,6 @@ for n = 1:nmax-40000
       phi_positive = integrator(delta_t, U, k, m, true, m);
       phi_negative = integrator(delta_t, U, k, m, false, m);
 
-      % integrador simetrico
       U_aux = U_aux + gamma(m) * (phi_positive + phi_negative);
     end
     U = U_aux;
