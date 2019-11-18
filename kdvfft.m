@@ -6,6 +6,21 @@ clc
 set(gca,'FontSize',8)
 set(gca,'LineWidth',2)
 
+q = 0;
+while q <= 0 || mod(q,2) > 0
+    msg = 'Ingresar el orden (debe ser un número par > 0): ';
+    q = input(msg);
+end
+s = q/2;
+
+integrators = {@phi_LieTrotter}; %TODO add strang
+integrator_method = 0;
+while integrator_method <= 0 || integrator_method > 2
+    prompt = 'Seleccionar un método (1: Lie-Trotter, 2: Strang): ';
+    integrator_method = input(prompt);
+end
+integrator = integrators{integrator_method};
+
 N = 256;
 x = linspace(-10,10,N);
 delta_x = x(2) - x(1);
@@ -30,16 +45,21 @@ tmax = 1.5; nplt = floor((tmax/100)/delta_t); nmax = round(tmax/delta_t);
 udata = u.'; tdata = 0;
 U = fft(u);
 
+gammas = {[0.5]; [-1/16, 9/16]; [1/144, -8/63, 625/1008]; [-1/2304, 32/675, -729/3200, 117649/172800]};
+
 for n = 1:nmax-40000
     t = n*delta_t;
-    
-    % lineal
-    U = U.*exp(1i*k.^3*delta_t);
-    
-    % no lineal
-    
-    U = U  - (3i*k*delta_t).*fft((real(ifft(U))).^2);
-    
+
+    U_aux = zeros(1, N);
+    gamma = gammas{s};
+    for m = 1:s
+      phi_positive = integrator(U, k, delta_t, m, true, m);
+      phi_negative = integrator(U, k, delta_t, m, false, m);
+
+      % integrador simetrico
+      U_aux = U_aux + gamma(m) * (phi_positive + phi_negative);
+    end
+    U = U_aux;
     if mod(n,nplt) == 0
         u = real(ifft(U));
         udata = [udata u.']; tdata = [tdata t];
