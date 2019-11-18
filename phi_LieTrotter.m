@@ -13,5 +13,5 @@ function U = Lineal(delta_t, U, k)
 end
 
 function U = NonLineal(delta_t, U, k)
-  U = U.*exp(3i*k.^3*delta_t); % ????????
+  U = U  - (3i*k*delta_t).*dft((real(idft(U))).^2);
 end
